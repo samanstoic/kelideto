@@ -1,0 +1,71 @@
+services:
+  keypro-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: keypro_backend
+    restart: unless-stopped
+    working_dir: /var/www/html
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_KEY: base64:wXw381e9kO7/Nq756L7Wl3t41NfXpB2jP749kU37Hps=
+      DB_CONNECTION: pgsql
+      DB_HOST: keypro-postgis
+      DB_PORT: 5432
+      DB_DATABASE: keypro_db
+      DB_USERNAME: keypro_user
+      DB_PASSWORD: keypro_dev_secret_password
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      keypro-postgis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "php -r \"file_get_contents('http://localhost:8000/api/health');\" || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  keypro-postgis:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: keypro_postgis
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: keypro_db
+      POSTGRES_USER: keypro_user
+      POSTGRES_PASSWORD: keypro_dev_secret_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keypro_user -d keypro_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  keypro-redis:
+    image: redis:7.2-alpine
+    container_name: keypro_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  postgis_data:
+    driver: local
+  redis_data:
+    driver: local

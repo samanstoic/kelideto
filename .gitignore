@@ -7,6 +7,8 @@
 .env
 .env.backup
 .env.production
+.env.local
+.env.*.local
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
@@ -20,3 +22,6 @@ yarn-error.log
 Thumbs.db
 *.swp
 *.bak
+docker-compose.override.yml
+*.sqlite
+*.sqlite-journal
