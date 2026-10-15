@@ -1,69 +1,67 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { App } from '../../resources/js/app';
 
-describe('KeyPro Frontend App & Health View', () => {
+describe('KeyPro Frontend App Navigation & Page Views', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
   });
 
-  it('renders the main heading and Persian title correctly', () => {
-    // Mock the fetch call to return a healthy payload
-    vi.spyOn(global, 'fetch').mockImplementation(() =>
-      Promise.resolve({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            status: 'healthy',
-            timestamp: '2026-10-15T12:00:00Z',
-            services: {
-              database: { status: 'healthy', driver: 'pgsql' },
-              cache: { status: 'healthy' },
-            },
-          }),
-      } as Response)
-    );
-
+  it('renders Landing Page by default with hero call to action', () => {
     render(<App />);
 
-    expect(screen.getByText('سامانه جامع خدمات کلیدسازی KeyPro')).toBeInTheDocument();
-    expect(screen.getByText('وضعیت سلامت سامانه‌ها (Live Health Check)')).toBeInTheDocument();
+    expect(screen.getByText('KeyPro | کلیدتو')).toBeInTheDocument();
+    expect(screen.getByText('سامانه هوشمند اعزام فوری کلیدساز در محل (۲۴ ساعته)')).toBeInTheDocument();
+    expect(screen.getByText('قفل درب باز نمی‌شود؟ کلید در خودرو جا مانده است؟')).toBeInTheDocument();
   });
 
-  it('displays healthy server status when API responds', async () => {
-    vi.spyOn(global, 'fetch').mockImplementation(() =>
-      Promise.resolve({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            status: 'healthy',
-            timestamp: '2026-10-15T12:00:00Z',
-            services: {
-              database: { status: 'healthy', driver: 'pgsql' },
-              cache: { status: 'healthy' },
-            },
-          }),
-      } as Response)
-    );
-
+  it('navigates to Booking/Service Selection page when clicking action button', () => {
     render(<App />);
 
-    await waitFor(() => {
-      expect(screen.getByText('فعال و سالم (Healthy)')).toBeInTheDocument();
-      expect(screen.getByText('pgsql (healthy)')).toBeInTheDocument();
-    });
+    // Click on "درخواست کلیدساز" in header nav
+    const bookingNavBtn = screen.getAllByRole('button', { name: 'درخواست کلیدساز' })[0];
+    fireEvent.click(bookingNavBtn);
+
+    expect(screen.getByText('انتخاب خدمت کلیدسازی و امنیت')).toBeInTheDocument();
+    expect(screen.getByText('همه خدمات')).toBeInTheDocument();
+    expect(screen.getByText('بازگشایی انواع قفل درب ضدسرقت و معمولی')).toBeInTheDocument();
   });
 
-  it('displays error message when health API fails', async () => {
-    vi.spyOn(global, 'fetch').mockImplementation(() =>
-      Promise.reject(new Error('خطا در برقراری ارتباط با شبکه سرور'))
-    );
-
+  it('navigates to Auth page and displays login form', () => {
     render(<App />);
 
-    await waitFor(() => {
-      expect(screen.getByText('خطا در برقراری ارتباط با شبکه سرور')).toBeInTheDocument();
-    });
+    const authBtn = screen.getByRole('button', { name: 'ورود / ثبت‌نام' });
+    fireEvent.click(authBtn);
+
+    expect(screen.getByText('ورود / ثبت‌نام در کلیدتو')).toBeInTheDocument();
+    expect(screen.getByText('مشتری (خدمات قفل)')).toBeInTheDocument();
+    expect(screen.getByText('متخصص و کلیدساز')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'دریافت کد تایید یکبار مصرف' })).toBeInTheDocument();
+  });
+
+  it('navigates to Panels and allows switching roles', () => {
+    render(<App />);
+
+    const panelsNavBtn = screen.getAllByRole('button', { name: 'داشبورد نقش‌ها' })[0];
+    fireEvent.click(panelsNavBtn);
+
+    expect(screen.getByRole('button', { name: '👤 پنل مشتری' })).toBeInTheDocument();
+    expect(screen.getByText('سفارش فعال: بازگشایی درب ضدسرقت')).toBeInTheDocument();
+
+    // Switch to Technician panel
+    const techBtn = screen.getByRole('button', { name: '🔧 پنل متخصص' });
+    fireEvent.click(techBtn);
+    expect(screen.getByText(/وضعیت شیفت کاری: آنلاین و آماده پذیرش/)).toBeInTheDocument();
+
+    // Switch to Operator panel
+    const opBtn = screen.getByRole('button', { name: '📡 دیسپچ و اپراتوری' });
+    fireEvent.click(opBtn);
+    expect(screen.getByText('درخواست‌های در انتظار دیسپچ')).toBeInTheDocument();
+
+    // Switch to Accountant panel
+    const accBtn = screen.getByRole('button', { name: '💰 دفتر کل مالی' });
+    fireEvent.click(accBtn);
+    expect(screen.getByText(/موجودی دفتر کل/)).toBeInTheDocument();
   });
 });
