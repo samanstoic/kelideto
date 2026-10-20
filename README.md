@@ -14,5 +14,5 @@
 ## فناوری‌های پایه:
 - **Backend:** PHP 8.3 / Laravel 11 (Modular Monolith)
 - **Database:** PostgreSQL 16 + PostGIS 3.4
-- **Frontend:** React 18+ / TypeScript / Vite / Vanilla CSS Design Tokens / Leaflet.js
+- **Frontend:** Semantic HTML5 / CSS3 / modular Vanilla JavaScript / Vite / Leaflet.js
 - **Architecture:** Modular Monolith, PWA, Event-Driven

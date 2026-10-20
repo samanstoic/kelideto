@@ -14,6 +14,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+    'initial_setup_token' => env('INITIAL_SETUP_TOKEN'),
 
     /*
     |--------------------------------------------------------------------------

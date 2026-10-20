@@ -14,7 +14,7 @@ class RequireRole
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        $userId = $request->header('X-User-Id') ?? auth()->id();
+        $userId = $request->user()?->getAuthIdentifier();
 
         if (!$userId) {
             return response()->json([
@@ -22,6 +22,14 @@ class RequireRole
                 'error' => 'UNAUTHENTICATED',
                 'message' => 'احراز هویت الزامی است.',
             ], 401);
+        }
+
+        if (!DB::table('users')->where('id', $userId)->where('status', 'active')->exists()) {
+            return response()->json([
+                'success' => false,
+                'error' => 'FORBIDDEN_INACTIVE_ACCOUNT',
+                'message' => 'حساب کاربری فعال نیست.',
+            ], 403);
         }
 
         $userRoles = DB::table('role_user')

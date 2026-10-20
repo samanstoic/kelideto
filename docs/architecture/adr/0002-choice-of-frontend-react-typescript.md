@@ -1,5 +1,5 @@
 # ADR-002: انتخاب React، TypeScript و Vite برای فرانت‌اند با استایلینگ Vanilla CSS مدرن
-**وضعیت:** پذیرفته‌شده (Accepted)  
+**وضعیت:** منسوخ‌شده؛ جایگزین‌شده با [ADR-009](./0009-vanilla-javascript-frontend.md)
 **تاریخ:** ۲۰۲۶-۱۰  
 **تصمیم‌گیرندگان:** Software Architect, Senior React/TypeScript Developer  
 

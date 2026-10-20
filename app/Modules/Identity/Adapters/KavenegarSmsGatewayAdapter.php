@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 class KavenegarSmsGatewayAdapter implements SmsGatewayInterface
 {
     protected ?string $apiKey;
+
     protected string $sender;
 
     public function __construct()
@@ -20,8 +21,9 @@ class KavenegarSmsGatewayAdapter implements SmsGatewayInterface
     public function sendOtp(string $phoneNumber, string $code): bool
     {
         if (empty($this->apiKey)) {
-            Log::warning("[Kavenegar Adapter] API Key not set, falling back to mock logging.");
-            return true;
+            Log::warning('Kavenegar SMS is disconnected because its API key is not configured.');
+
+            return false;
         }
 
         try {
@@ -31,9 +33,10 @@ class KavenegarSmsGatewayAdapter implements SmsGatewayInterface
                 'template' => 'keypro-verify',
             ]);
 
-            return $response->successful();
+            return $response->successful() && (int) $response->json('return.status') === 200;
         } catch (\Throwable $e) {
-            Log::error("[Kavenegar Adapter] Send failed: " . $e->getMessage());
+            Log::error('Kavenegar OTP request failed.', ['exception' => get_class($e)]);
+
             return false;
         }
     }
@@ -41,7 +44,9 @@ class KavenegarSmsGatewayAdapter implements SmsGatewayInterface
     public function sendNotification(string $phoneNumber, string $message): bool
     {
         if (empty($this->apiKey)) {
-            return true;
+            Log::warning('Kavenegar SMS is disconnected because its API key is not configured.');
+
+            return false;
         }
 
         try {
@@ -51,9 +56,10 @@ class KavenegarSmsGatewayAdapter implements SmsGatewayInterface
                 'message' => $message,
             ]);
 
-            return $response->successful();
+            return $response->successful() && (int) $response->json('return.status') === 200;
         } catch (\Throwable $e) {
-            Log::error("[Kavenegar Adapter] Send notification failed: " . $e->getMessage());
+            Log::error('Kavenegar notification request failed.', ['exception' => get_class($e)]);
+
             return false;
         }
     }

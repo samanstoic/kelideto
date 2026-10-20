@@ -7,17 +7,18 @@ services:
     restart: unless-stopped
     working_dir: /var/www/html
     environment:
-      APP_ENV: local
-      APP_DEBUG: "true"
-      APP_KEY: base64:wXw381e9kO7/Nq756L7Wl3t41NfXpB2jP749kU37Hps=
+      APP_ENV: ${APP_ENV:-local}
+      APP_DEBUG: "${APP_DEBUG:-false}"
+      APP_KEY: ${APP_KEY:?Set APP_KEY in the .env file}
+      INITIAL_SETUP_TOKEN: ${INITIAL_SETUP_TOKEN:?Set INITIAL_SETUP_TOKEN in the .env file}
       DB_CONNECTION: pgsql
       DB_HOST: keypro-postgis
       DB_PORT: 5432
       DB_DATABASE: keypro_db
       DB_USERNAME: keypro_user
-      DB_PASSWORD: keypro_dev_secret_password
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in the .env file}
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8001:8000"
     volumes:
       - .:/var/www/html
     depends_on:
@@ -30,6 +31,31 @@ services:
       retries: 3
       start_period: 20s
 
+  keypro-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: keypro_scheduler
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: ["php", "artisan", "schedule:work"]
+    environment:
+      APP_ENV: ${APP_ENV:-local}
+      APP_DEBUG: "${APP_DEBUG:-false}"
+      APP_KEY: ${APP_KEY:?Set APP_KEY in the .env file}
+      INITIAL_SETUP_TOKEN: ${INITIAL_SETUP_TOKEN:?Set INITIAL_SETUP_TOKEN in the .env file}
+      DB_CONNECTION: pgsql
+      DB_HOST: keypro-postgis
+      DB_PORT: 5432
+      DB_DATABASE: keypro_db
+      DB_USERNAME: keypro_user
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in the .env file}
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      keypro-postgis:
+        condition: service_healthy
+
   keypro-postgis:
     image: postgis/postgis:16-3.4-alpine
     container_name: keypro_postgis
@@ -37,9 +63,9 @@ services:
     environment:
       POSTGRES_DB: keypro_db
       POSTGRES_USER: keypro_user
-      POSTGRES_PASSWORD: keypro_dev_secret_password
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in the .env file}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgis_data:/var/lib/postgresql/data
     healthcheck:
@@ -54,7 +80,7 @@ services:
     container_name: keypro_redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     volumes:
       - redis_data:/data
     healthcheck:

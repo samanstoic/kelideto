@@ -2,10 +2,53 @@
 
 namespace App\Modules\Identity\Policies;
 
+use App\Modules\Identity\Services\LocationAccessWindow;
 use Illuminate\Support\Facades\DB;
 
 class BookingPolicy
 {
+    public function viewCustomerLocation(int $userId, object $booking): bool
+    {
+        $user = DB::table('users')->where('id', $userId)->where('status', 'active')->first();
+        $technician = DB::table('technician_profiles')
+            ->where('user_id', $userId)
+            ->where('status', 'verified')
+            ->first();
+
+        if (!$user || !$technician || (int) $booking->technician_id !== (int) $technician->id) {
+            return false;
+        }
+
+        $assignment = DB::table('assignments')
+            ->where('booking_id', $booking->id)
+            ->where('technician_id', $technician->id)
+            ->where('status', 'active')
+            ->first();
+
+        if (
+            !in_array($booking->status, ['assigned', 'en_route', 'arrived', 'in_progress'], true) ||
+            empty($booking->location_access_expires_at) ||
+            now()->greaterThanOrEqualTo($booking->location_access_expires_at) ||
+            ! $assignment ||
+            empty($assignment->assigned_at) ||
+            now()->greaterThanOrEqualTo(
+                \Illuminate\Support\Carbon::parse($assignment->assigned_at)
+                    ->addHours(app(LocationAccessWindow::class)->hours())
+            )
+        ) {
+            return false;
+        }
+
+        return DB::table('permission_role')
+            ->join('roles', 'permission_role.role_id', '=', 'roles.id')
+            ->join('role_user', 'roles.id', '=', 'role_user.role_id')
+            ->join('permissions', 'permission_role.permission_id', '=', 'permissions.id')
+            ->where('role_user.user_id', $userId)
+            ->where('roles.name', 'technician')
+            ->where('permissions.name', 'bookings.view_assigned_location')
+            ->exists();
+    }
+
     /**
      * Determine whether the user can view the booking.
      * Prevents IDOR (Insecure Direct Object Reference).

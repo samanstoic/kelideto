@@ -30,7 +30,7 @@
 
 ```mermaid
 graph TD
-    subgraph Frontend [لایه‌های کاربری فرانت‌اند (React + TypeScript + Vite + PWA)]
+    subgraph Frontend [لایه‌های کاربری فرانت‌اند (HTML + CSS + Vanilla JavaScript + Vite + PWA)]
         C_APP[وب‌اپلیکیشن مشتری - PWA]
         S_APP[وب‌اپلیکیشن متخصص - PWA]
         OPS_PANEL[پنل دیسپچ و عملیات]
@@ -66,7 +66,7 @@ graph TD
 - **بک‌اند:** PHP 8.3 و فریم‌ورک Laravel 11 (استفاده از رویکرد Action-Domain-Responder / Service-Repository در ماژول‌ها).
 - **پایگاه داده رابطه‌ای و مکانی:** PostgreSQL 16 به همراه اکستنشن PostGIS 3.4 (برای نوع داده‌های Geography Point، نمایه‌های مکانی GiST و توابع `ST_DWithin` و محاسبات فاصله‌ای KNN).
 - **مدیریت صف و حافظه موقت:** Redis 7 به عنوان کش، صف‌های توزیع‌شده و قفل‌های توزیع‌شده (`atomic locks`)؛ با امکان بازگشت شفاف به صف Database در غیاب Redis.
-- **فرانت‌اند:** React 18/19، تایپ‌اسکریپت (TypeScript)، بیلد تول Vite، معماری PWA با Service Worker و استراتژی آفلاین.
+- **فرانت‌اند:** HTML5 معنایی، CSS3 و JavaScript ماژولار بومی با Vite؛ معماری PWA با Service Worker و استراتژی آفلاین. React و TypeScript در runtime و build فرانت‌اند استفاده نمی‌شوند.
 - **طراحی بصری و رابط کاربری:** سیستم طراحی مدرن CSS بومی (Vanilla CSS Design Tokens)، راست‌چین استاندارد (RTL)، تایپوگرافی فارسی هماهنگ (Vazirmatn / Shabnam)، استفاده از اصول Glassmorphism، دارک‌مود عمیق، گرادیان‌های جذاب و ریزتعاملات (Micro-interactions) که حس یک محصول بسیار فاخر و مطمئن را به کاربر منتقل می‌کند.
 - **نقشه و GIS فرانت‌اند:** کتابخانه متن‌باز Leaflet.js با لایه‌های کاشی OpenStreetMap، بدون وابستگی به API Keyهای انحصاری و با قابلیت ذخیره‌سازی بسته کاشی‌های شهر در IndexedDB مرورگر جهت نمایش آفلاین.
 

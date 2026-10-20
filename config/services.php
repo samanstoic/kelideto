@@ -28,6 +28,35 @@ return [
         'key' => env('RESEND_KEY'),
     ],
 
+    'nominatim' => [
+        'search_url' => env(
+            'NOMINATIM_SEARCH_URL',
+            'https://nominatim.openstreetmap.org/search'
+        ),
+    ],
+
+    'sms' => [
+        'driver' => env('SMS_DRIVER', env('APP_ENV', 'production') === 'production' ? 'kavenegar' : 'mock'),
+    ],
+
+    'kavenegar' => [
+        'api_key' => env('KAVENEGAR_API_KEY'),
+        'sender' => env('KAVENEGAR_SENDER', '10008663'),
+    ],
+
+    'webpush' => [
+        'public_key' => env('WEBPUSH_VAPID_PUBLIC_KEY'),
+        'private_key' => env('WEBPUSH_VAPID_PRIVATE_KEY'),
+        'subject' => env('WEBPUSH_VAPID_SUBJECT'),
+    ],
+
+    'payment_gateway' => [
+        'driver' => env('PAYMENT_GATEWAY_DRIVER', 'disconnected'),
+        'zarinpal' => [
+            'merchant_id' => env('ZARINPAL_MERCHANT_ID'),
+        ],
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

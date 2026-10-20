@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Modules\Identity\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -28,12 +30,12 @@ class AuthController extends Controller
 
         $result = $this->authService->requestOtp($validated['phone_number']);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json([
                 'success' => false,
                 'error' => $result['error'],
                 'message' => $result['message'],
-            ], 429);
+            ], $result['error'] === 'AUTH_RATE_LIMITED' ? 429 : 503);
         }
 
         return response()->json([
@@ -63,12 +65,12 @@ class AuthController extends Controller
         $role = $validated['role'] ?? 'customer';
         $result = $this->authService->verifyOtp($validated['phone_number'], $validated['code'], $role);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json([
                 'success' => false,
                 'error' => $result['error'],
                 'message' => $result['message'],
-            ], 422);
+            ], \in_array($result['error'], ['ADMIN_OTP_LOGIN_DISABLED', 'ACCOUNT_INACTIVE'], true) ? 403 : 422);
         }
 
         return response()->json([
@@ -78,14 +80,25 @@ class AuthController extends Controller
         ], 200);
     }
 
+    public function logout(Request $request): JsonResponse
+    {
+        $token = $request->user()?->currentAccessToken();
+
+        if ($token instanceof PersonalAccessToken) {
+            $token->delete();
+        }
+
+        return response()->json(['success' => true]);
+    }
+
     /**
      * Get authenticated user profile.
      */
     public function me(Request $request): JsonResponse
     {
-        $userId = $request->header('X-User-Id') ?? auth()->id();
+        $userId = $request->user()?->getAuthIdentifier();
 
-        if (!$userId) {
+        if (! $userId) {
             return response()->json([
                 'success' => false,
                 'error' => 'UNAUTHENTICATED',
@@ -93,8 +106,8 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $user = \Illuminate\Support\Facades\DB::table('users')->where('id', $userId)->first();
-        if (!$user) {
+        $user = DB::table('users')->where('id', $userId)->first();
+        if (! $user) {
             return response()->json([
                 'success' => false,
                 'error' => 'USER_NOT_FOUND',
@@ -102,7 +115,7 @@ class AuthController extends Controller
             ], 404);
         }
 
-        $roles = \Illuminate\Support\Facades\DB::table('role_user')
+        $roles = DB::table('role_user')
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->where('role_user.user_id', $user->id)
             ->pluck('roles.name')

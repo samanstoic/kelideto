@@ -22,8 +22,8 @@
 | **PHP CLI** | نصب‌شده | `PHP 8.3.28 (cli)` (ZTS Visual C++ 2019 x64) | `C:\laragon\bin\php\php-8.3.28-Win32-vs16-x64\php.exe` | همچنین نسخه ثانویه `PHP 8.4.7` در مسیر `C:\Program Files\php 8.4.7\php.exe` وجود دارد. برای سازگاری کامل اکوسیستم Laravel 11، نسخه **PHP 8.3.28** به عنوان مفسر اصلی استاندارد انتخاب می‌شود. |
 | **ماژول‌های PHP** | بررسی‌شده و تست‌شده | `pdo_pgsql` و `pgsql` در پوشه ext موجودند و قابلیت بارگذاری آن‌ها تایید شد | `C:\laragon\bin\php\php-8.3.28-Win32-vs16-x64\ext\` | اکستنشن‌های `pdo_sqlite`, `curl`, `mbstring`, `openssl`, `intl`, `gd`, `bcmath` فعال هستند. بارگذاری مستقیم `pdo_pgsql` و `pgsql` با فلگ `-d` بدون خطا تست و اثبات گردید. برای اتصال سراسری محلی، برداشتن کامنت در `php.ini` یا کانتینر PostGIS Docker قابل استفاده است. |
 | **Composer** | نصب‌شده | `Composer 2.8.4` (2024-12-11) | `C:\laragon\bin\composer\composer.phar` | کامپوزر به‌طور کامل با مفسر PHP 8.3 اجرا می‌شود و آماده نصب پکیج‌های Laravel است. |
-| **Node.js** | نصب‌شده | `v26.3.1` | در متغیر محیطی PATH موجود است | نسخه مدرن Node.js برای اجرای ابزارهای ساخت (Vite / TypeScript / React). |
-| **NPM** | نصب‌شده | `11.16.0` | در متغیر محیطی PATH موجود است | ابزار مدیریت پکیج‌های جاوااسکریپت/تایپ‌اسکریپت. |
+| **Node.js** | نصب‌شده | `v26.3.1` | در متغیر محیطی PATH موجود است | نسخه مدرن Node.js برای اجرای ابزارهای ساخت و آزمون JavaScript با Vite، ESLint و Vitest. |
+| **NPM** | نصب‌شده | `11.16.0` | در متغیر محیطی PATH موجود است | ابزار مدیریت وابستگی‌های JavaScript. |
 | **Git** | نصب‌شده | `2.55.0.windows.3` | در متغیر محیطی PATH موجود است | سیستم کنترل نسخه فعال است. |
 | **Docker Engine** | نصب‌شده | `Docker version 29.5.3` | نیازمند استارت سرویس | سرویس `com.docker.service` در حال حاضر وضعیت `Stopped` دارد و ماشین `docker-desktop` در WSL 2 متوقف است. برای اجرای کانتینر PostgreSQL/PostGIS باید این سرویس راه‌اندازی شود. |
 | **Docker Compose** | نصب‌شده | `v5.1.4` | آماده استفاده با Docker | جهت هماهنگ‌سازی کانتینرهای PostgreSQL 16، PostGIS 3.4، Redis و Laravel. |

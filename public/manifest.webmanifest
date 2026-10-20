@@ -1,0 +1,37 @@
+{
+  "id": "/",
+  "name": "کلیدتو | خدمات کلیدسازی",
+  "short_name": "کلیدتو",
+  "description": "درخواست و پیگیری خدمات کلیدسازی با قیمت شفاف",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "theme_color": "#176f62",
+  "background_color": "#f7f8f5",
+  "categories": ["utilities", "lifestyle"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icons/keypro-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/keypro-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/keypro-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

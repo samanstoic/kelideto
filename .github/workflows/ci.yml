@@ -73,7 +73,7 @@ jobs:
         run: php artisan test
 
   frontend-quality-and-build:
-    name: Frontend Lint, Typecheck, Tests & Build
+    name: Frontend Lint, Tests & Build
     runs-on: ubuntu-latest
 
     steps:
@@ -91,9 +91,6 @@ jobs:
 
       - name: Run ESLint Code Quality
         run: npm run lint
-
-      - name: Run TypeScript Strict Typecheck
-        run: npm run typecheck
 
       - name: Run Vitest Unit & Integration Tests
         run: npm run test
